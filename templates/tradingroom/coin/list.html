@@ -1,0 +1,95 @@
+{% extends "tradingroom/base.html" %}
+{% load i18n %}
+{% load materializecss %}
+{% load static %}
+{% load static %}
+{% load utils %}
+
+{% block title %}
+  {% trans "Coins" %} - {{ block.super }}
+{% endblock %}
+
+{% block body_class %}body-coins{% endblock %}
+
+{% block menu_coins_class %}active{% endblock %}
+
+{% block breadcrumbs %}
+  <ul class="breadcrumbs">
+    <li class="visible-s">{% trans "Coins" context "Dashboard coins (discounts) list." %}</li>
+  </ul>
+{% endblock %}
+
+{% block menu_discounts_class %} active{% endblock %}
+
+{% block header_extra %}
+  <div class="btn-fab-fixed">
+    <a href="{% url 'tradingroom:coin-add' %}" class="btn-fab-default waves-effect waves-light"
+        title="{% trans "Add coin" context "Coin (discount) list add button text" %}">
+      <svg data-src="{% static "tradingroom/images/add.svg" %}" />
+    </a>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col s12 l9">
+      {% if coins %}
+        <div class="card">
+          <div class="data-table-container">
+            <table class="bordered highlight responsive data-table last-right-align">
+              <thead>
+                <tr>
+                  {% trans "Name" context "Coin (discount) table header" as label %}
+                  {% sorting_header 'name' label is_wide=True %}
+
+                  {% trans "Start date" context "Coin (discount) table header" as label %}
+                  {% sorting_header 'start_date' label is_wide=True %}
+
+                  {% trans "End date" context "Coin (discount) table header" as label %}
+                  {% sorting_header 'end_date' label is_wide=True %}
+
+                  {% trans "Discount" context "Coin (discount) table header" as label %}
+                  {% sorting_header 'value' label is_wide=True %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for coin in coins %}
+                  <tr data-action-go="{% url 'tradingroom:coin-update' pk=coin.pk %}">
+                    <td>
+                      {{ coin }}
+                    </td>
+                    <td>
+                      {{ coin.start_date }}
+                    </td>
+                    <td>
+                      {{ coin.end_date|default_if_none:"-" }}
+                    </td>
+                    <td>
+                      {{ coin.value }}{{ coin.get_type_display }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {% paginate coins %}
+      {% else %}
+        {% if is_empty %}
+          {% include 'tradingroom/coin/zero_page.html' %}
+        {% else %}
+          <div class="col s12">
+            <div class="not-found">
+              <p class="grey-text">
+                {% trans "No coins found" context "Empty coins table message" %}
+              </p>
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+    <div class="col s12 l3" id="filters">
+      {% if not is_empty %}{% filters filter_set %}{% endif %}
+    </div>
+  </div>
+{% endblock %}

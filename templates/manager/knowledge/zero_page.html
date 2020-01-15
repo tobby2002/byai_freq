@@ -1,0 +1,12 @@
+{% extends 'manager/base_zero_page.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "No knowledge found." %}{% endblock %}
+{% block content %}
+  {% static "manager/images/add.svg" as img_path %}
+  {% blocktrans %}
+    Knowledge is used to create class on particular properties or entities.<br>
+    You can create knowledge by using the <span class="btn-fab-presentation"><svg data-src="{{ img_path }}" /></span> button.
+  {% endblocktrans %}
+{% endblock %}

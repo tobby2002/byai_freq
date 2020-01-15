@@ -1,0 +1,95 @@
+{% extends "manager/base.html" %}
+{% load i18n %}
+{% load materializecss %}
+{% load static %}
+{% load static %}
+{% load utils %}
+
+{% block title %}
+  {% trans "Knowledge" %} - {{ block.super }}
+{% endblock %}
+
+{% block body_class %}body-coins{% endblock %}
+
+{% block menu_coins_class %}active{% endblock %}
+
+{% block breadcrumbs %}
+  <ul class="breadcrumbs">
+    <li class="visible-s">{% trans "Knowledge" context "Knowledge coins (discounts) list." %}</li>
+  </ul>
+{% endblock %}
+
+{% block menu_discounts_class %} active{% endblock %}
+
+{% block header_extra %}
+  <div class="btn-fab-fixed">
+    <a href="{% url 'manager:knowledge-add' %}" class="btn-fab-default waves-effect waves-light"
+        title="{% trans "Add Knowledge" context "Knowledge list add button text" %}">
+      <svg data-src="{% static "knowledge/images/add.svg" %}" />
+    </a>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col s12 l9">
+      {% if True %}
+        <div class="card">
+          <div class="data-table-container">
+            <table class="bordered highlight responsive data-table last-right-align">
+              <thead>
+                <tr>
+                  {% trans "id" context "knowledge (discount) table header" as label %}
+                  {% sorting_header 'name' label %}
+
+                  {% trans "Name" context "knowledge (discount) table header" as label %}
+                  {% sorting_header 'start_date' label is_wide=False  %}
+
+                  {% trans "Description" context "knowledge (discount) table header" as label %}
+                  {% sorting_header 'end_date' label is_wide=False %}
+
+                  {% trans "etc" context "knowledge (discount) table header" as label %}
+                  {% sorting_header 'value' label is_wide=False %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for k in knowledge %}
+                  <tr data-action-go="{% url 'manager:knowledge-update' slug=k.s %}">
+                    <td>
+                      {{ k.s }}
+                    </td>
+                    <td>
+                      {{ k.l }}
+                    </td>
+                    <td>
+                      {{ k.c|default_if_none:"-" }}
+                    </td>
+                    <td>
+                      {{ k.s }}{{ k.c }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {% paginate coins %}
+      {% else %}
+        {% if is_empty %}
+          {% include 'manager/knowledge/zero_page.html' %}
+        {% else %}
+          <div class="col s12">
+            <div class="not-found">
+              <p class="grey-text">
+                {% trans "No knowledge found" context "Empty knowledge table message" %}
+              </p>
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+    <div class="col s12 l3" id="filters">
+      {% if not is_empty %}{% filters filter_set %}{% endif %}
+    </div>
+  </div>
+{% endblock %}

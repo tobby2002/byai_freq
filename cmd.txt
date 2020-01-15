@@ -1,0 +1,156 @@
+########### docs #################
+https://docs.getsaleor.com/docs/getting-started/installation-macos/
+https://getbootstrap.com/docs/4.3/getting-started/introduction/
+https://docs.getsaleor.com/docs/customization/frontend/
+https://materializecss.com/
+
+### custumizing css and javascript
+--> ref|https://yongbeomkim.github.io/webpack/django-webpack-vue-semi/
+--> https://heropy.blog/2018/01/31/sass/
+
+To run webpack in watch mode run:
+$ npm start
+To prepare static assets for deployment run:    $npm run build-assets
+$ npm run build-assets --production
+
+To Internationalization
+$ tx pull --all
+Compiling Message Catalogs
+$ python manage.py compilemessages
+
+
+############# dashboard  --> add tradingroom  #############
+edit
+saleor url.py    url(r"^tradingroom/", include((tradingroom_urls, "tradingroom"), namespace="tradingroom")),
+saleor/...
+./saleor/static/
+static/...
+templates/...
+templates/tradingroom/base.model
+render_bundle 'dash  로 검색해서...바꿈
+settings.py/...STATICFILES_DIRS
+
+
+webpack.config.js
+
+./buybyai_v0.1/saleor/static/tradingroom/js/tradingroom.js
+import '../scss/tradingroom.scss';
+import './components';
+
+
+./buybyai_v0.1/saleor/static/tradingroom/js/components/index.js
+import './forecast'
+and make ./buybyai_v0.1/saleor/static/tradingroom/js/components/candlestick.js file
+and add javascript's functions into candlestick.js
+
+
+and set
+webpack.config.js  # change relations... --> ref|https://yongbeomkim.github.io/webpack/django-webpack-vue-semi/
+$ npm run build-assets
+or
+$ ./node_modules/.bin/webpack --config webpack.config.js
+
+
+
+
+
+  277  psql -d postgres
+  278  python3 manage.py collectstatic
+  279  npm install
+  280  npm run build-assets
+  281  npm run build-emails
+  282  python manage.py createsuperuser
+
+
+
+########### django ###############
+```bash
+https://simpleisbetterthancomplex.com/tutorial/2016/07/26/how-to-reset-migrations.html
+
+python manage.py migrate knowledge zero
+
+python manage.py makemigrations --empty yourappname
+
+python manage.py migrate knowledge zero
+
+DELETE FROM django_migrations WHERE app = 'coin'
+DROP books_book
+
+edit models.py
+edit each html, moduels...
+
+python manage.py makemigrations
+python manage.py migrate
+manage.py sqlhmigrate myapp 0001
+
+
+## for dynamic model
+python manage.py makemigrations dynamic_models
+python manage.py migrate dynamic_models
+
+
+############ postsql #############
+# reference
+https://kez1994.tistory.com/330
+https://kimdoky.github.io/deploy/2017/10/31/deploy-PostgreSQL.html
+https://neulpeumbomin.tistory.com/9  # --> 상
+
+# install
+brew install postgresql
+
+# launch
+brew services start postgresql
+Or, if you don't want/need a background service you can just run:
+pg_ctl -D /usr/local/var/postgres start
+
+
+# make role
+su -   ## -->  root
+createuser --interactive --pwprompt
+
+psql postgres
+
+\l
+\connect dbname
+
+help
+
+ctrl + d
+
+logout
+
+# database 생성
+CREATE DATABASE salor ENCODING 'utf-8';
+
+# user 생성
+create user neo password 'neo123';
+
+# user 유저권한주기
+grant all on database salor to neo with grant option;
+
+# database 소유권 user에게 주기
+alter database saleor owner to neo;
+
+psql -d postgres
+ALTER USER postgres WITH SUPERUSER;
+ALTER USER neo WITH SUPERUSER;
+
+# (neo) 유저 접속 테스트
+postgres-# \q
+psql -U neo -d salor
+
+(venv) (base) neoui-iMac:buybyai neo1$ psql -U neo -d salor
+psql (11.4)
+Type "help" for help.
+
+salor=>
+
+################
+docker-compose build
+docker-compose run web python3 manage.py migrate
+docker-compose run web python3 manage.py collectstatic
+docker-compose run web python3 manage.py populatedb --createsuperuser
+docker-compose up
+Goto http://127.0.0.1:8000
+############ yarn run xxxx.json when webpack error ##########
+yarn run xxxx.json

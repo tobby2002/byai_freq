@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+  web:
+    ports:
+      - 8000:8000
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app/:/app/app:Z
+      - ./templates/:/app/templates:Z
+      - ./tests/:/app/tests
+      # prevents overshadowing of build-time assets
+      - /app/app/static/assets
+      - /app/templates/templated_email/compiled
+      # shared volume between celery and web for media
+      - app-media:/app/media
+
+  db:
+    ports:
+      - 5432:5432
+
+  redis:
+    ports:
+      - 6379:6379
+
+  celery:
+    volumes:
+      - ./app/:/app/app:Z
+      - ./templates/:/app/templates:Z
+      # prevents overshadowing of build-time assets
+      - /app/templates/templated_email/compiled
+      # shared volume between celery and web for media
+      - app-media:/app/media
+
+volumes:
+  saleor-media:

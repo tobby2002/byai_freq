@@ -1,0 +1,124 @@
+{% extends "manager/base.html" %}
+{% load i18n %}
+{% load materializecss %}
+{% load static %}
+
+{% block title %}
+  {% if knowledge.pk %}
+    {{ knowledge }}
+  {% else %}
+    {% trans "Add new knowledge"  context "Knowledge page title" %}
+  {% endif %}
+  - {% trans "Knowledge" context "Knowledge list." %} - {{ block.super }}
+{% endblock %}
+
+{% block body_class %}body-knowledge{% endblock %}
+
+{% block menu_knowledge_class %}active{% endblock %}
+
+{% block header_menu %}
+  {% url "manager:knowledge-list" as url %}
+  {% include "manager/includes/_back_link.html" with url=url %}
+{% endblock %}
+
+{% block header_extra %}
+  {% if knowledge.pk %}
+    <a class="dropdown-button right" href="#" data-activates="knowledge-delete" data-constrainwidth="false">
+      <svg data-src="{% static "manager/images/more-vert.svg" %}" height="24" width="24" />
+    </a>
+    <ul id="knowledge-delete" class="dropdown-content">
+      <li>
+        <a class="modal-trigger-custom" href="#base-modal" data-href="{% url 'manager:knowledge-delete' pk=knowledge.pk %}">
+          {% trans "Remove knowledge" context "Knowledge (discount) action" %}
+        </a>
+      </li>
+    </ul>
+  {% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  <ul class="breadcrumbs breadcrumbs--history">
+    <li>
+      <a href="{% url 'manager:knowledge-list' %}">
+        {% trans "Knowledges" context "Knowledge knowledges (discounts) list." %}
+      </a>
+    </li>
+    <li class="back-mobile">
+      <a href="{% url 'manager:knowledge-list' %}">
+        <svg data-src="{% static "manager/images/arrow-left.svg" %}" fill="#fff" width="20px" height="20px" />
+      </a>
+    </li>
+    <li>
+      <span class="breadcrumbs--ellipsed-item">
+        {% if knowledge.pk %}
+          {{ knowledge }}
+        {% else %}
+          {% trans "Add new knowledge" context "Knowledge (discount) breadcrumbs" %}
+        {% endif %}
+      </span>
+    </li>
+  </ul>
+{% endblock %}
+
+{% block menu_discounts_class %} active{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col m12 l9">
+      <div class="card">
+        <form method="post" enctype="multipart/form-data" id="form-knowledges" novalidate>
+          <div class="card-content card-content-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+              <blockquote>
+                {% for non_field_error in form.non_field_errors %}
+                  {{ non_field_error }}
+                {% endfor %}
+              </blockquote>
+            {% endif %}
+            <div class="row">
+              {{ form.name|materializecss }}
+            </div>
+            <div class="row">
+              {{ form.tax_rate|materializecss }}
+            </div>
+            <div class="row">
+              <div class="col s12 m8">
+                <div class="row">
+                  {{ form.description|materializecss }}
+                </div>
+              </div>
+              <div class="col s12 m4">
+                {{ form.slug|materializecss:"input-field s12" }}
+              </div>
+            </div>
+
+
+            <div class="row">
+              {{ exform.cheese|materializecss }}
+            </div>
+          </div>
+
+          <div class="card-action right-align">
+            <a href="{% url 'manager:knowledge-list' %}" class="btn-flat waves-effect">
+              {% trans "Cancel" context "Knowledge cancel action" %}
+            </a>
+            {% if knowledge %}
+              <button type="submit" class="btn waves-effect">
+                {% trans "Update" context "Knowledge update action" %}
+              </button>
+            {% else %}
+              <button type="submit" class="btn waves-effect">
+                {% trans "Create" context "Knowledge create action" %}
+              </button>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col m12 l3 help-box"></div>
+    <div class="col s12 l3" id="filters">
+{#      {% if not is_empty %}{% filters filter_set %}{% endif %}#}
+    </div>
+  </div>
+{% endblock %}

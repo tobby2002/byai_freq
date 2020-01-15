@@ -1,0 +1,123 @@
+{% extends "tradingroom/base.html" %}
+{% load i18n %}
+{% load materializecss %}
+{% load static %}
+
+{% block title %}
+  {% if coin.pk %}
+    {{ coin }}
+  {% else %}
+    {% trans "Add new coin"  context "Coin (discount) page title" %}
+  {% endif %}
+  - {% trans "Coins" context "Tradingroom coins (discounts) list." %} - {{ block.super }}
+{% endblock %}
+
+{% block body_class %}body-coins{% endblock %}
+
+{% block menu_coins_class %}active{% endblock %}
+
+{% block header_menu %}
+  {% url "tradingroom:coin-list" as url %}
+  {% include "tradingroom/includes/_back_link.html" with url=url %}
+{% endblock %}
+
+{% block header_extra %}
+  {% if coin.pk %}
+    <a class="dropdown-button right" href="#" data-activates="coin-delete" data-constrainwidth="false">
+      <svg data-src="{% static "tradingroom/images/more-vert.svg" %}" height="24" width="24" />
+    </a>
+    <ul id="coin-delete" class="dropdown-content">
+      <li>
+        <a class="modal-trigger-custom" href="#base-modal" data-href="{% url 'tradingroom:coin-delete' pk=coin.pk %}">
+          {% trans "Remove coin" context "Coin (discount) action" %}
+        </a>
+      </li>
+    </ul>
+  {% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  <ul class="breadcrumbs breadcrumbs--history">
+    <li>
+      <a href="{% url 'tradingroom:coin-list' %}">
+        {% trans "Coins" context "Tradingroom coins (discounts) list." %}
+      </a>
+    </li>
+    <li class="back-mobile">
+      <a href="{% url 'tradingroom:coin-list' %}">
+        <svg data-src="{% static "tradingroom/images/arrow-left.svg" %}" fill="#fff" width="20px" height="20px" />
+      </a>
+    </li>
+    <li>
+      <span class="breadcrumbs--ellipsed-item">
+        {% if coin.pk %}
+          {{ coin }}
+        {% else %}
+          {% trans "Add new coin" context "Coin (discount) breadcrumbs" %}
+        {% endif %}
+      </span>
+    </li>
+  </ul>
+{% endblock %}
+
+{% block menu_discounts_class %} active{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col m12 l9">
+      <div class="card">
+        <form method="post" enctype="multipart/form-data" id="form-coins" novalidate>
+          <div class="card-content card-content-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+              <blockquote>
+                {% for non_field_error in form.non_field_errors %}
+                  {{ non_field_error }}
+                {% endfor %}
+              </blockquote>
+            {% endif %}
+            <div class="row">
+              {{ form.name|materializecss }}
+            </div>
+            <div class="row">
+              <div class="col s12 m8">
+                <div class="row">
+                  {{ form.value|materializecss }}
+                </div>
+              </div>
+              <div class="col s12 m4">
+                {{ form.type|materializecss:"input-field s12" }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12 m6">
+                <div class="row">
+                  {{ form.start_date|materializecss }}
+                </div>
+              </div>
+              <div class="col s12 m6">
+                {{ form.end_date|materializecss:"input-field s12" }}
+              </div>
+            </div>
+          </div>
+
+          <div class="card-action right-align">
+            <a href="{% url 'tradingroom:coin-list' %}" class="btn-flat waves-effect">
+              {% trans "Cancel" context "Tradingroom cancel action" %}
+            </a>
+            {% if coin.pk %}
+              <button type="submit" class="btn waves-effect">
+                {% trans "Update" context "Tradingroom update action" %}
+              </button>
+            {% else %}
+              <button type="submit" class="btn waves-effect">
+                {% trans "Create" context "Tradingroom create action" %}
+              </button>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col m12 l3 help-box"></div>
+  </div>
+{% endblock %}
